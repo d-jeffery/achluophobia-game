@@ -74,8 +74,8 @@ var player = {
 };
 
 var player_sight = {
-	arc_length : 150,
-	arc_angle : 30,
+	arc_length : 180,
+	arc_angle : 35,
 	draw: function() {
 	
 		var startX = player.x;
@@ -91,7 +91,11 @@ var player_sight = {
 		if (DEBUG) {
 			ctx.fillStyle = "#00FF00";
 		} else {
-			ctx.fillStyle = "#FFFFFF";
+			var fading_gradient = ctx.createRadialGradient(0,0,this.arc_length,0,0,0);
+			fading_gradient.addColorStop(0, 'rgba(255,255,255,0)');
+			fading_gradient.addColorStop(0.5, 'rgba(255,255,255,.9)');
+			fading_gradient.addColorStop(1, 'rgba(255,255,255,1)');
+			ctx.fillStyle = fading_gradient;
 		}
 		
 		ctx.beginPath();

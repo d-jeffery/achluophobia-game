@@ -29,14 +29,14 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 
 		if (MathHelper.sign(dot_products[i]) == 1 && MathHelper.sign(dot_products[j]) == 1) {
 			actual_points.push(points[j]);
-		} else if (MathHelper.sign(dot_products[i]) == 1 && MathHelper.sign(dot_products[j]) == -1) {
+		} else if (MathHelper.sign(dot_products[i]) == 1 && MathHelper.sign(dot_products[j]) != 1) {
 			actual_points.push(points[j]);
 			
 			 var new_point_x = points[j][0] + (points[j][0] - x_coord) * shadow_depth;
 			 var new_point_y = points[j][1] + (points[j][1] - y_coord) * shadow_depth;	
 			 actual_points.push([new_point_x, new_point_y]);
 			
-		} else if (MathHelper.sign(dot_products[i]) == -1 && MathHelper.sign(dot_products[j]) == 1) {
+		} else if (MathHelper.sign(dot_products[i]) != 1 && MathHelper.sign(dot_products[j]) == 1) {
 
 			 var new_point_x = points[j][0] + (points[j][0] - x_coord) * shadow_depth;
 			 var new_point_y = points[j][1] + (points[j][1] - y_coord) * shadow_depth;	
@@ -49,8 +49,10 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 	if (actual_points.length != 0) {
 		if (DEBUG) {
 			ctx.fillStyle = "#FF00FF";
+			ctx.strokeStyle = "#000000";
 		} else {
 			ctx.fillStyle = "#000000";
+			ctx.strokeStyle = "#000000";
 		}
 		ctx.beginPath();
 		ctx.moveTo(actual_points[0][0], actual_points[0][1]);
@@ -58,14 +60,16 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 			ctx.lineTo(actual_points[i][0], actual_points[i][1]);
 				
 		}
+
 		ctx.closePath( );
 		ctx.fill();
+		ctx.stroke();
 	}
 }
 
 function draw_shadows() {
 	var square = translate_to_square(player.x, player.y);
-	var distance_from = (Math.floor(player_sight.arc_length / SQUARE_WIDTH) + 4);
+	var distance_from = (Math.floor(player_sight.arc_length / SQUARE_WIDTH) + 6);
 	var distance_start = Math.ceil(distance_from/2);
 	var draw_shadow_depth = distance_from * SQUARE_WIDTH;
 	
@@ -77,7 +81,7 @@ function draw_shadows() {
 	
 	for(var i = start_X; i < stop_X; i++) {
 		for(var j = start_Y; j < stop_Y; j++) {
-			if (HOUSE_LAYOUT[i][j] == 0) {
+			if (HOUSE_LAYOUT[i][j] == 0 && hasFreeAdjacent(i,j)) {
 				
 				draw_wall_shadow(player.x, player.y, i, j, draw_shadow_depth);
 			}

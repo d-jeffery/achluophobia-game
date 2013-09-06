@@ -7,6 +7,8 @@ var HOUSE_COLS = 60;
 
 var SQUARE_WIDTH = 40;
 
+var FIRST_ROOM = true;
+
 function find_random() {
 	var foundSquare = false;
 	
@@ -97,9 +99,37 @@ function add_room() {
 		HOUSE_LAYOUT[ location.door[0] ][ location.door[1] ] = 1;
 		
 		dig_out(startX, startY, width, height);
+		return true;
 	} else {
 		return false;
 	}
+}
+
+function getRandomSquare(min_x, min_y, x_offset, y_offset) {
+	var random_x = Math.floor(Math.random() * (x_offset)) + min_x;
+	var random_y = Math.floor(Math.random() * (y_offset)) + min_y;
+	return {x: random_x, y: random_y};
+
+}
+
+function hasFreeAdjacent(x, y) {
+	if (x < HOUSE_ROWS && HOUSE_LAYOUT[x + 1][y] == 1) {
+		return true;
+	}
+			
+	if (x > 0 && HOUSE_LAYOUT[x - 1][y] == 1) {
+		return true;
+	}
+			
+	if (y <  HOUSE_COLS && HOUSE_LAYOUT[x][y + 1] == 1) {
+		return true;
+	}
+			
+	if (y > 0 && HOUSE_LAYOUT[x][y - 1] == 1) {
+		return true;
+	}
+	
+	return false;
 }
 
 function isFree(x, y, w, h) {
@@ -118,6 +148,15 @@ function dig_out(x, y, w, h) {
 			HOUSE_LAYOUT[x + i][y + j] = 1;
 		}
 	}
+	
+	if (!FIRST_ROOM) {
+		var key_square = getRandomSquare(x, y, w, h);
+		var new_key = new Key(key_square.x * SQUARE_WIDTH + SQUARE_WIDTH/2,
+							key_square.y * SQUARE_WIDTH + SQUARE_WIDTH/2);
+		GAME_OBJECTS.push(new_key);
+	}
+	
+	if (FIRST_ROOM) FIRST_ROOM = false;
 }
 
 function translate_to_square(x, y) {
@@ -128,13 +167,12 @@ function translate_to_square(x, y) {
 }
 
 
-function debug_draw_map() {
-	
+function draw_map() {
 
 	for(var i = 0; i < HOUSE_ROWS; i++) {
 		for(var j = 0; j < HOUSE_COLS; j++) {
 			if (HOUSE_LAYOUT[i][j] != 0) {
-				ctx.fillStyle = "#FFFFFF";
+				ctx.filleStyle = "#FFFFFF";
 				ctx.beginPath();
 				ctx.rect(i * SQUARE_WIDTH,
 						 j * SQUARE_WIDTH,
@@ -159,8 +197,9 @@ function init_house() {
 	
 	dig_out(28, 28, 6, 6);
 	
-	for(var i = 0; i < 6; i++) {
-		add_room();
+	var room_count = 0;
+	while(room_count < 6) {
+		if (add_room()) ++room_count;
 	}
 	
 	console.log();

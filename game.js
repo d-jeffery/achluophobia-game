@@ -1,5 +1,7 @@
 var ctx;
 var canvas;
+var canvas = document.createElement('canvas');
+
 var HEIGHT;
 var WIDTH;
 
@@ -58,8 +60,30 @@ function clear() {
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
 
-function loop() {
+function render() {
+	requestAnimationFrame(render);
 	clear();
+	ctx.save();	
+	
+	
+    ctx.translate(-player.x + WIDTH/2, -player.y + HEIGHT/2);
+		
+	if (DEBUG) draw_map();	
+	
+	player.draw();	
+		
+	for(var i = 0; i < GAME_OBJECTS.length; i++) {
+		GAME_OBJECTS[i].draw();
+	}
+	draw_shadows();
+	
+	
+	ctx.translate(player.x - WIDTH/2, player.y - HEIGHT/2);
+	ctx.restore();
+
+}
+
+function loop() {
 	/*
 	ctx.save();
     ctx.translate(player.x, player.y);
@@ -69,23 +93,11 @@ function loop() {
 	player.update();	
 	ctx.restore();
 	*/	
+	
+	player.update();
 	for(var i = 0; i < GAME_OBJECTS.length; i++) {
 		GAME_OBJECTS[i].update();
-	}
-	
-	ctx.save();	
-    ctx.translate(-player.x + WIDTH/2, -player.y + HEIGHT/2);
-		
-	if (DEBUG) debug_draw_map();	
-		
-	for(var i = 0; i < GAME_OBJECTS.length; i++) {
-		GAME_OBJECTS[i].draw();
-	}
-	
-	draw_shadows();
-	
-	ctx.translate(player.x - WIDTH/2, player.y - HEIGHT/2);
-	ctx.restore();
+	}	
 }
 
 function init_game() {
@@ -97,10 +109,12 @@ function init_game() {
 	
 	init_house();
 	
-	GAME_OBJECTS.push(player);
+	//GAME_OBJECTS.push(player);
 	player.init();
 	
-	return setInterval(loop, 5);
+	setInterval(loop, 5);
+	requestAnimationFrame(render);
+	
 }
 
 init_game();
