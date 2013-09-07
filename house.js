@@ -15,8 +15,8 @@ function find_random() {
 	var location = {};
 	
 	while(!foundSquare) {
-		var randomX = Math.floor(Math.random() * (HOUSE_ROWS-2)) + 1;
-		var randomY = Math.floor(Math.random() * (HOUSE_COLS-2)) + 1;
+		var randomX = Math.floor(Math.random() * (HOUSE_ROWS-11)) + 2;
+		var randomY = Math.floor(Math.random() * (HOUSE_COLS-11)) + 2;
 		
 		if (HOUSE_LAYOUT[randomX][randomY] == 0) {
 			if (HOUSE_LAYOUT[randomX + 1][randomY] == 1) {
@@ -75,6 +75,7 @@ function add_room() {
 		width *= location.new_room[0];
 		startY = Math.floor(Math.random()  * (height-1) * - 1);
 	}
+	
 	if (location.new_room[1] != 0) {
 		height *= location.new_room[1];
 		startX = Math.floor(Math.random()  * (width-1)* - 1);
@@ -95,7 +96,7 @@ function add_room() {
 	}
 	
 	if (isFree(startX, startY, width, height)) {
-		console.log(startX + " " + startY + " " + width + " " +height);	
+		//console.log(startX + " " + startY + " " + width + " " +height);	
 		HOUSE_LAYOUT[ location.door[0] ][ location.door[1] ] = 1;
 		
 		dig_out(startX, startY, width, height);
@@ -135,6 +136,7 @@ function hasFreeAdjacent(x, y) {
 function isFree(x, y, w, h) {
 	for(var i = 0; i < w; i++) {
 		for (var j = 0; j < h; j++) {
+			//console.log(x + " " + i + " " + y + " " + j);
 			if (HOUSE_LAYOUT[x + i][y + j] != 0) return false;
 		}
 	}
@@ -168,23 +170,21 @@ function translate_to_square(x, y) {
 
 
 function draw_map() {
-
 	for(var i = 0; i < HOUSE_ROWS; i++) {
 		for(var j = 0; j < HOUSE_COLS; j++) {
 			if (HOUSE_LAYOUT[i][j] != 0) {
-				ctx.filleStyle = "#FFFFFF";
+				
 				ctx.beginPath();
 				ctx.rect(i * SQUARE_WIDTH,
 						 j * SQUARE_WIDTH,
 						 SQUARE_WIDTH,
 						 SQUARE_WIDTH);
 				ctx.closePath( );
+				ctx.fillStyle = "#FFFFFF";
 				ctx.fill();
 			}
 		}
-	}
-	
-	
+	}	
 }
 
 function init_house() {
@@ -195,13 +195,13 @@ function init_house() {
 		}
 	}
 	
-	dig_out(28, 28, 6, 6);
+	dig_out(28, 28, 5, 5);
 	
 	var room_count = 0;
 	while(room_count < 6) {
 		if (add_room()) ++room_count;
 	}
 	
-	console.log();
+	//console.log();
 }
 

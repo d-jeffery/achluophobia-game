@@ -1,3 +1,19 @@
+/**
+ * Provides requestAnimationFrame in a cross browser way.
+ * @author paulirish / http://paulirish.com/
+ */
+if ( !window.requestAnimationFrame ) {
+	window.requestAnimationFrame = ( function() {
+		return window.webkitRequestAnimationFrame ||
+		window.mozRequestAnimationFrame ||
+		window.oRequestAnimationFrame ||
+		window.msRequestAnimationFrame ||
+		function( callback, element ) {
+			window.setTimeout( callback, 1000 / 60 );
+		};
+	} )();
+}
+
 var ctx;
 var canvas;
 var canvas = document.createElement('canvas');
@@ -64,8 +80,7 @@ function render() {
 	requestAnimationFrame(render);
 	clear();
 	ctx.save();	
-	
-	
+
     ctx.translate(-player.x + WIDTH/2, -player.y + HEIGHT/2);
 		
 	if (DEBUG) draw_map();	
@@ -113,7 +128,7 @@ function init_game() {
 	player.init();
 	
 	setInterval(loop, 5);
-	requestAnimationFrame(render);
+	window.requestAnimationFrame(render);
 	
 }
 

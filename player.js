@@ -10,15 +10,13 @@ var player = {
 	
 	draw: function() {
 		
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.width/2, 2 * Math.PI, false);
 		if (DEBUG) {
-			ctx.fillStyle = "#00FF00";
+			ctx.fillStyle = "#0000FF";
 		} else {
 			ctx.fillStyle = "#FFFFFF";
 		}
-		
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.width/2, 2 * Math.PI, false);
-		ctx.closePath();
 		ctx.fill();
 		
 		
@@ -88,6 +86,12 @@ var player_sight = {
 		
 		ctx.rotate(rotateTo * Math.PI/180);
 		
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		ctx.lineTo(0 + this.arc_length, 0);
+		ctx.arc(0, 0, this.arc_length, 0, Math.PI/180 * this.arc_angle, false);
+
+		ctx.closePath();
 		if (DEBUG) {
 			ctx.fillStyle = "#00FF00";
 		} else {
@@ -97,13 +101,6 @@ var player_sight = {
 			fading_gradient.addColorStop(1, 'rgba(255,255,255,1)');
 			ctx.fillStyle = fading_gradient;
 		}
-		
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(0 + this.arc_length, 0);
-		ctx.arc(0, 0, this.arc_length, 0, Math.PI/180 * this.arc_angle, false);
-		ctx.lineTo(0 , 0);
-		ctx.closePath();
 		ctx.fill();
 		
 		ctx.rotate(-rotateTo * Math.PI/180);

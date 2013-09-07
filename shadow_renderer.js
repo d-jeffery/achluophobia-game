@@ -47,6 +47,13 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 	}
 	
 	if (actual_points.length != 0) {
+		ctx.beginPath();
+		ctx.moveTo(actual_points[0][0], actual_points[0][1]);
+		for(var i = 1; i < actual_points.length; i++) {
+			ctx.lineTo(actual_points[i][0], actual_points[i][1]);
+				
+		}
+		ctx.closePath( );
 		if (DEBUG) {
 			ctx.fillStyle = "#FF00FF";
 			ctx.strokeStyle = "#000000";
@@ -54,14 +61,7 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 			ctx.fillStyle = "#000000";
 			ctx.strokeStyle = "#000000";
 		}
-		ctx.beginPath();
-		ctx.moveTo(actual_points[0][0], actual_points[0][1]);
-		for(var i = 1; i <actual_points.length; i++) {
-			ctx.lineTo(actual_points[i][0], actual_points[i][1]);
-				
-		}
-
-		ctx.closePath( );
+		ctx.lineWidth = 1;
 		ctx.fill();
 		ctx.stroke();
 	}
