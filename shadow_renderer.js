@@ -68,7 +68,7 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 }
 
 function draw_shadows() {
-	var square = translate_to_square(player.x, player.y);
+	var square = translateToSquare(player.x, player.y);
 	var distance_from = (Math.floor(player_sight.arc_length / SQUARE_WIDTH) + 6);
 	var distance_start = Math.ceil(distance_from/2);
 	var draw_shadow_depth = distance_from * SQUARE_WIDTH;
@@ -81,7 +81,10 @@ function draw_shadows() {
 	
 	for(var i = start_X; i < stop_X; i++) {
 		for(var j = start_Y; j < stop_Y; j++) {
-			if (HOUSE_LAYOUT[i][j] == 0 && hasFreeAdjacent(i,j)) {
+			if (i == DOOR_X && j == DOOR_Y) continue;
+		
+			if ((HOUSE_LAYOUT[i][j] == 0 && hasFreeAdjacent(i,j)) ||
+				HOUSE_LAYOUT[i][j] == -1 ) {
 				
 				draw_wall_shadow(player.x, player.y, i, j, draw_shadow_depth);
 			}

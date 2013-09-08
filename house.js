@@ -1,6 +1,3 @@
-
-//I HATE THIS CODE FROM TOP TO BOTTOM
-
 var HOUSE_LAYOUT = new Array();
 var HOUSE_ROWS = 60;
 var HOUSE_COLS = 60;
@@ -9,14 +6,17 @@ var SQUARE_WIDTH = 40;
 
 var FIRST_ROOM = true;
 
+var DOOR_X = 30;
+var DOOR_Y = 27;
+
 function find_random() {
 	var foundSquare = false;
 	
 	var location = {};
 	
 	while(!foundSquare) {
-		var randomX = Math.floor(Math.random() * (HOUSE_ROWS-11)) + 2;
-		var randomY = Math.floor(Math.random() * (HOUSE_COLS-11)) + 2;
+		var randomX = Math.floor(Math.random() * (HOUSE_ROWS - 2)) + 1;
+		var randomY = Math.floor(Math.random() * (HOUSE_COLS - 2)) + 1;
 		
 		if (HOUSE_LAYOUT[randomX][randomY] == 0) {
 			if (HOUSE_LAYOUT[randomX + 1][randomY] == 1) {
@@ -95,11 +95,10 @@ function add_room() {
 		startY = startY + location.door[1] + location.new_room[1];
 	}
 	
-	if (isFree(startX, startY, width, height)) {
-		//console.log(startX + " " + startY + " " + width + " " +height);	
+	if (isFree(startX, startY, width, height)) {	
 		HOUSE_LAYOUT[ location.door[0] ][ location.door[1] ] = 1;
 		
-		dig_out(startX, startY, width, height);
+		digOut(startX, startY, width, height);
 		return true;
 	} else {
 		return false;
@@ -114,6 +113,11 @@ function getRandomSquare(min_x, min_y, x_offset, y_offset) {
 }
 
 function hasFreeAdjacent(x, y) {
+	if (x + 1 >= HOUSE_ROWS || y + 1 >= HOUSE_COLS ||
+		x - 1 <= 0 || y - 1 <= 0) {
+		return false;
+	}
+
 	if (x < HOUSE_ROWS && HOUSE_LAYOUT[x + 1][y] == 1) {
 		return true;
 	}
@@ -134,9 +138,12 @@ function hasFreeAdjacent(x, y) {
 }
 
 function isFree(x, y, w, h) {
+	if (x + w >= HOUSE_ROWS || y + h >= HOUSE_COLS ||
+		x < 0 || y < 0) {
+		return false;
+	}	
 	for(var i = 0; i < w; i++) {
 		for (var j = 0; j < h; j++) {
-			//console.log(x + " " + i + " " + y + " " + j);
 			if (HOUSE_LAYOUT[x + i][y + j] != 0) return false;
 		}
 	}
@@ -144,9 +151,9 @@ function isFree(x, y, w, h) {
 	return true;
 }
 
-function dig_out(x, y, w, h) {
+function digOut(x, y, w, h) {
 	for(var i = 0; i < w; i++) {
-		for (var j = 0; j < h; j++) {
+		for (var j = 0; j < h; j++) {w
 			HOUSE_LAYOUT[x + i][y + j] = 1;
 		}
 	}
@@ -161,7 +168,7 @@ function dig_out(x, y, w, h) {
 	if (FIRST_ROOM) FIRST_ROOM = false;
 }
 
-function translate_to_square(x, y) {
+function translateToSquare(x, y) {
 	var x_coord = Math.floor(x / SQUARE_WIDTH);
 	var y_coord = Math.floor(y / SQUARE_WIDTH);
 	
@@ -174,34 +181,121 @@ function draw_map() {
 		for(var j = 0; j < HOUSE_COLS; j++) {
 			if (HOUSE_LAYOUT[i][j] != 0) {
 				
-				ctx.beginPath();
-				ctx.rect(i * SQUARE_WIDTH,
+				ctx.fillStyle = "#FFFFFF";
+				ctx.fillRect(i * SQUARE_WIDTH,
 						 j * SQUARE_WIDTH,
 						 SQUARE_WIDTH,
 						 SQUARE_WIDTH);
-				ctx.closePath( );
-				ctx.fillStyle = "#FFFFFF";
-				ctx.fill();
+
 			}
 		}
 	}	
 }
 
 function init_house() {
+
+	HOUSE_LAYOUT = new Array();
+	HOUSE_ROWS = 60;
+	HOUSE_COLS = 60;
+
+	SQUARE_WIDTH = 40;
+
+	FIRST_ROOM = true;
+
+	DOOR_X = 30;
+	DOOR_Y = 27;
+
+
 	for(var i = 0; i < HOUSE_ROWS; i++) {
 		HOUSE_LAYOUT[i] = new Array();
 		for(var j = 0; j < HOUSE_COLS; j++) {
-			HOUSE_LAYOUT[i][j] = 0;
+			if ((i == 0 || i == HOUSE_ROWS-1) ||
+				(j == 0 || j == HOUSE_COLS-1)) {
+				//Create a boundary around the outside
+				HOUSE_LAYOUT[i][j] = -1;
+			} else {
+				HOUSE_LAYOUT[i][j] = 0;
+			}
 		}
 	}
 	
-	dig_out(28, 28, 5, 5);
+	HOUSE_LAYOUT[DOOR_X-1][DOOR_Y] = -1;
+	HOUSE_LAYOUT[DOOR_X-1][DOOR_Y-1] = -1;
+	HOUSE_LAYOUT[DOOR_X][DOOR_Y-1] = -1;
+	HOUSE_LAYOUT[DOOR_X+1][DOOR_Y] = -1;
+	HOUSE_LAYOUT[DOOR_X+1][DOOR_Y-1] = -1;
+	HOUSE_LAYOUT[DOOR_X][DOOR_Y] = -1;
+	
+	digOut(28, 28, 5, 5);
 	
 	var room_count = 0;
-	while(room_count < 6) {
+	while(room_count < NUMBER_OF_ROOMS) {
 		if (add_room()) ++room_count;
 	}
+	
 	
 	//console.log();
 }
 
+function draw_door() {
+		ctx.save();	
+		ctx.translate(DOOR_X * SQUARE_WIDTH, DOOR_Y * SQUARE_WIDTH);
+		
+		if (NUMBER_OF_KEYS_LEFT > 0) {
+			ctx.beginPath();
+			ctx.moveTo(0, SQUARE_WIDTH);
+			ctx.lineTo(SQUARE_WIDTH, SQUARE_WIDTH);
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = "#000000";
+			ctx.stroke();
+		
+			ctx.beginPath();
+			ctx.arc(SQUARE_WIDTH/2, SQUARE_WIDTH/2, 4, 0, 2 * Math.PI);
+			ctx.fillStyle = "#000000";
+			ctx.fill();
+			
+			ctx.beginPath();
+			ctx.moveTo(SQUARE_WIDTH/2, SQUARE_WIDTH/2);
+			ctx.lineTo(SQUARE_WIDTH/2, SQUARE_WIDTH/2 + 10);
+			ctx.lineWidth = 3;
+			ctx.strokeStyle = "#000000";
+			ctx.stroke();
+		} else {
+			
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillRect(0,0,SQUARE_WIDTH,SQUARE_WIDTH);
+			ctx.save();	
+			ctx.scale(2, 1);
+			ctx.beginPath();
+			ctx.moveTo(0, SQUARE_WIDTH);
+			ctx.lineTo(-10, SQUARE_WIDTH * 1.5);
+			ctx.lineTo(SQUARE_WIDTH/2 + 10, SQUARE_WIDTH * 1.5);
+			ctx.lineTo(SQUARE_WIDTH/2, SQUARE_WIDTH);
+			ctx.closePath();
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fill();
+
+			
+			ctx.beginPath();
+			ctx.arc(SQUARE_WIDTH/4, SQUARE_WIDTH * 1.5, SQUARE_WIDTH/2, 0, Math.PI, false);
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fill();
+			ctx.restore();
+		}
+		
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		ctx.lineTo(0, SQUARE_WIDTH/2);
+		ctx.arcTo(SQUARE_WIDTH/2,
+				-SQUARE_WIDTH*4,
+				SQUARE_WIDTH,
+				SQUARE_WIDTH/2,
+				SQUARE_WIDTH/2);
+		ctx.lineTo(SQUARE_WIDTH, 0);
+		ctx.closePath();
+		ctx.fillStyle = "#000000";
+		ctx.fill();
+		
+		ctx.translate(-DOOR_X * SQUARE_WIDTH, -DOOR_Y * SQUARE_WIDTH);
+		ctx.restore();
+}

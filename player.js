@@ -26,22 +26,22 @@ var player = {
 	update: function() {
 		if (rightDown) {
 			this.x = this.x + 1;
-			var point_1 = translate_to_square(this.x + this.width/2, this.y - this.width/2);
-			var point_2 = translate_to_square(this.x + this.width/2, this.y + this.width/2);
+			var point_1 = translateToSquare(this.x + this.width/2, this.y - this.width/2);
+			var point_2 = translateToSquare(this.x + this.width/2, this.y + this.width/2);
 
-			if (HOUSE_LAYOUT[point_1.x][point_1.y] == 0 ||
-				HOUSE_LAYOUT[point_2.x][point_2.y] == 0) {
+			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
+				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.x = this.x - 1;
 			}
 		}
 		if (leftDown) {
 			this.x = this.x - 1;
 			
-			var point_1 = translate_to_square(this.x - this.width/2, this.y - this.width/2);
-			var point_2 = translate_to_square(this.x - this.width/2, this.y + this.width/2);
+			var point_1 = translateToSquare(this.x - this.width/2, this.y - this.width/2);
+			var point_2 = translateToSquare(this.x - this.width/2, this.y + this.width/2);
 
-			if (HOUSE_LAYOUT[point_1.x][point_1.y] == 0 ||
-				HOUSE_LAYOUT[point_2.x][point_2.y] == 0) {
+			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
+				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.x = this.x + 1;
 			}
 		}
@@ -49,22 +49,22 @@ var player = {
 			this.y = this.y - 1;
 			
 						
-			var point_1 = translate_to_square(this.x - this.width/2, this.y - this.width/2);
-			var point_2 = translate_to_square(this.x + this.width/2, this.y - this.width/2);
+			var point_1 = translateToSquare(this.x - this.width/2, this.y - this.width/2);
+			var point_2 = translateToSquare(this.x + this.width/2, this.y - this.width/2);
 
-			if (HOUSE_LAYOUT[point_1.x][point_1.y] == 0 ||
-				HOUSE_LAYOUT[point_2.x][point_2.y] == 0) {
+			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
+				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.y = this.y + 1;
 			}
 		}
 		if (downDown) {
 			this.y = this.y + 1;
 									
-			var point_1 = translate_to_square(this.x - this.width/2, this.y + this.width/2);
-			var point_2 = translate_to_square(this.x + this.width/2, this.y + this.width/2);
+			var point_1 = translateToSquare(this.x - this.width/2, this.y + this.width/2);
+			var point_2 = translateToSquare(this.x + this.width/2, this.y + this.width/2);
 
-			if (HOUSE_LAYOUT[point_1.x][point_1.y] == 0 ||
-				HOUSE_LAYOUT[point_2.x][point_2.y] == 0) {
+			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
+				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.y = this.y - 1;
 			}
 		}
@@ -75,7 +75,7 @@ var player_sight = {
 	arc_length : 180,
 	arc_angle : 35,
 	draw: function() {
-	
+		
 		var startX = player.x;
 		var startY = player.y;
 		
@@ -90,8 +90,8 @@ var player_sight = {
 		ctx.moveTo(0, 0);
 		ctx.lineTo(0 + this.arc_length, 0);
 		ctx.arc(0, 0, this.arc_length, 0, Math.PI/180 * this.arc_angle, false);
-
 		ctx.closePath();
+		
 		if (DEBUG) {
 			ctx.fillStyle = "#00FF00";
 		} else {

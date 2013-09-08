@@ -15,36 +15,51 @@ if ( !window.requestAnimationFrame ) {
 }
 
 var ctx;
-var canvas;
-var canvas = document.createElement('canvas');
+var canvas = document.getElementById("no-where-to-go");
+var key_count = document.getElementById('key-count');
+
+var fade_count;
 
 var HEIGHT;
 var WIDTH;
 
-var DEBUG = false;
+var DEBUG;
+var GAME_OBJECTS;
 
-var GAME_OBJECTS = new Array();
+var currentGameState;
+
+//Also key count
+var NUMBER_OF_KEYS_LEFT;
+var NUMBER_OF_ROOMS;
 
 var rightDown = false;
 var leftDown = false;
 var upDown = false;
 var downDown = false;
+var enterDown = false;
 
 var MOUSEX;
 var MOUSEY;
 
+var GAME_STATES = {
+	WIN : 0,
+	PLAY : 1,
+}
+
 document.onkeydown = function onKeyDown(evt) {
-  if (evt.keyCode == 39 || evt.keyCode == 68) rightDown = true;
-  if (evt.keyCode == 37 || evt.keyCode == 65) leftDown = true;
-  if (evt.keyCode == 38 || evt.keyCode == 87) upDown = true;
-  if (evt.keyCode == 40 || evt.keyCode == 83) downDown = true;
+  if (evt.keyCode == 13) enterDown = true;
+  if (evt.keyCode == 68) rightDown = true;
+  if (evt.keyCode == 65) leftDown = true;
+  if (evt.keyCode == 87) upDown = true;
+  if (evt.keyCode == 83) downDown = true;
 }
 
 document.onkeyup = function onKeyUp(evt) {
-  if (evt.keyCode == 39 || evt.keyCode == 68) rightDown = false;
-  if (evt.keyCode == 37 || evt.keyCode == 65) leftDown = false;
-  if (evt.keyCode == 38 || evt.keyCode == 87) upDown = false;
-  if (evt.keyCode == 40 || evt.keyCode == 83) downDown = false;
+  if (evt.keyCode == 13) enterDown = false;
+  if (evt.keyCode == 68) rightDown = false;
+  if (evt.keyCode == 65) leftDown = false;
+  if (evt.keyCode == 87) upDown = false;
+  if (evt.keyCode == 83) downDown = false;
 }
 
 document.onmousemove = function mouseMove(event) {
@@ -76,9 +91,7 @@ function clear() {
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
 
-function render() {
-	requestAnimationFrame(render);
-	clear();
+function animateGame() {
 	ctx.save();	
 
     ctx.translate(-player.x + WIDTH/2, -player.y + HEIGHT/2);
@@ -86,50 +99,102 @@ function render() {
 	if (DEBUG) draw_map();	
 	
 	player.draw();	
-		
+
 	for(var i = 0; i < GAME_OBJECTS.length; i++) {
 		GAME_OBJECTS[i].draw();
 	}
 	draw_shadows();
 	
-	
+	draw_door();
 	ctx.translate(player.x - WIDTH/2, player.y - HEIGHT/2);
 	ctx.restore();
+}
 
+function animateWin() {
+	document.body.style.background = "#FFFFFF";
+	ctx.fillStyle = "#FFFFFF";
+	ctx.fillRect(0, 0, WIDTH, HEIGHT);
+	if (fade_count < 1)	fade_count += 0.005;
+	ctx.fillStyle = "rgba(0,0,0," + fade_count + ")";
+	ctx.font = "bold 64px Arial";
+	ctx.fillText("You Win!", WIDTH/2 - 140, HEIGHT/2);
+	ctx.font = "bold 24px Arial";
+	ctx.fillText("Press the 'Enter' key to replay...", WIDTH/2 - 165, HEIGHT/2 + 40);
+	
+}
+
+function render() {
+	requestAnimationFrame(render);
+	clear();
+	if (currentGameState == GAME_STATES.PLAY) {
+		animateGame();
+	} else if (currentGameState == GAME_STATES.WIN) {
+		animateWin();
+	}
 }
 
 function loop() {
-	/*
-	ctx.save();
-    ctx.translate(player.x, player.y);
-    ctx.rotate(Math.PI/180*30);
-    ctx.translate(-player.x,-player.y);
-	player.draw();
-	player.update();	
-	ctx.restore();
-	*/	
-	
 	player.update();
 	for(var i = 0; i < GAME_OBJECTS.length; i++) {
 		GAME_OBJECTS[i].update();
-	}	
+	}
+	if (NUMBER_OF_KEYS_LEFT == 0 && currentGameState != GAME_STATES.WIN) {
+		HOUSE_LAYOUT[DOOR_X][DOOR_Y] = 1;
+		revealText("goal")
+		testWin();
+	}
+	if (currentGameState == GAME_STATES.WIN && enterDown) {
+		initGame();
+	}
 }
 
-function init_game() {
-	canvas = document.getElementById("no-where-to-go");
+function testWin() {
+	var square = translateToSquare(player.x, player.y);
+	if (square.x == DOOR_X && square.y == DOOR_Y) {
+		currentGameState = GAME_STATES.WIN;
+	}
+}
+
+function showHelp() {
+	document.getElementById('help-link').style.display = "none";
+	document.getElementById('help').style.display = "block";
+	return false;
+}
+
+function revealText(id) {
+	var infoPs = document.getElementById('info').getElementsByTagName("p");
+	for (var i = 0; i < infoPs.length; i++) {
+        infoPs[i].style.display = "none";
+    }
+	document.getElementById(id).style.display = "block";
+}
+
+function initGame() {
+	document.body.style.background = "#000000";
+	revealText("loading")
 	ctx = canvas.getContext("2d");
+	fade_count = 0.0;
+	
+	DEBUG = false;
+	GAME_OBJECTS = new Array();
+	NUMBER_OF_ROOMS = NUMBER_OF_KEYS_LEFT = 6;
+	currentGameState = GAME_STATES.PLAY;
+	
+	ctx.globalAlpha = 1.0;
 	
 	WIDTH = canvas.width;
 	HEIGHT = canvas.height;
+	
+	key_count.textContent = NUMBER_OF_ROOMS;
 	
 	init_house();
 	
 	//GAME_OBJECTS.push(player);
 	player.init();
-	
+	revealText("objective")
 	setInterval(loop, 5);
 	window.requestAnimationFrame(render);
-	
+		
 }
 
-init_game();
+initGame();

@@ -31,7 +31,10 @@ function Key (x, y) {
 		if (MathHelper.distance(player.x, player.y, this.x, this.y) < player.width/2) {
 			//console.log(MathHelper.distance(player.x, player.y, this.x, this.y));
 			//Score for palyer
+			NUMBER_OF_KEYS_LEFT -= 1;
+			key_count.textContent = NUMBER_OF_KEYS_LEFT;
 			this.collected = true;
 		}
 	};
 }
+

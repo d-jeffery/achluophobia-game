@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>Nowhere To Hide</title>
 		<style>
 			* {
 				margin: 0;
 				padding: 0;
+			}
+			
+			p {
+				font: 12pt Arial;
 			}
 		
 			body {
@@ -12,17 +17,47 @@
 			}
 			
 			canvas#no-where-to-go {
-				margin: 120px auto;
+				margin: 40px auto 0;
 				display: block;
+			}
+			
+			div#info, div#help {
+				margin: 10px auto;
+				color: #FFFFFF;
+				text-align: center;
+			}
+			
+			a#help-link {
+				color: #FFFFFF;
+				text-align: center;
+				display:block;
+			}
+			
+			div#help {
+				
 			}
 			
 		</style>
 	</head>
 	<body>
-		<canvas id="no-where-to-go" width="640" height="640" />
+		<canvas id="no-where-to-go" width="640" height="640" >
+		</canvas>
+		<div id="info">
+			<p id="loading">Loading...</p>
+			<p id="objective" style="display:none;">Collect <span id="key-count">x</span> more keys to unlock the door, to your freedom.</p>
+			<p id="goal" style="display:none;">The door is open! Escape while you still can...</p>
+			<p id="goal" style="display:none;">You escaped. Well done. Press R to replay.</p>
+		</div>
+		<a id="help-link" href="javascript:showHelp();" >HELP</a>
+		<div id="help" style="display:none;">
+			<p>W A S D to move. Mouse to look around.</p>
+			<p>Find the keys to unlock the door located in the room you started in.</p>
+			<p>Exit through the door to win.</p>
+		</div>
+		
 	</body>
 	<footer>
-		<script type="text/javascript" src="math_helper.js"></script>
+		<script type="text/javascript" src="math_helper.js"></script>e
 		<script type="text/javascript" src="key.js"></script>
 		<script type="text/javascript" src="house.js"></script>
 		<script type="text/javascript" src="player.js"></script>
