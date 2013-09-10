@@ -61,7 +61,7 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 			ctx.fillStyle = "#000000";
 			ctx.strokeStyle = "#000000";
 		}
-		ctx.lineWidth = 1;
+		ctx.lineWidth = 2;
 		ctx.fill();
 		ctx.stroke();
 	}
@@ -69,15 +69,14 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 
 function draw_shadows() {
 	var square = translateToSquare(player.x, player.y);
-	var distance_from = (Math.floor(player_sight.arc_length / SQUARE_WIDTH) + 6);
-	var distance_start = Math.ceil(distance_from/2);
-	var draw_shadow_depth = distance_from * SQUARE_WIDTH;
+	var distanceFrom = (Math.ceil(player_sight.arc_length / SQUARE_WIDTH) + 1);
+	var draw_shadow_depth = distanceFrom * SQUARE_WIDTH;
 	
-	var start_X = (square.x - distance_start < 0) ? 0 : square.x - distance_start;
-	var start_Y = (square.y - distance_start < 0) ? 0 : square.y - distance_start;
+	var start_X = (square.x - distanceFrom < 0) ? 0 : square.x - distanceFrom;
+	var start_Y = (square.y - distanceFrom < 0) ? 0 : square.y - distanceFrom;
 	
-	var stop_X = (square.x + distance_from > HOUSE_ROWS) ? HOUSE_ROWS : square.x + distance_from;
-	var stop_Y = (square.y + distance_from > HOUSE_COLS) ? HOUSE_COLS : square.y + distance_from;
+	var stop_X = (square.x + distanceFrom > HOUSE_ROWS) ? HOUSE_ROWS : square.x + distanceFrom;
+	var stop_Y = (square.y + distanceFrom > HOUSE_COLS) ? HOUSE_COLS : square.y + distanceFrom;
 	
 	for(var i = start_X; i < stop_X; i++) {
 		for(var j = start_Y; j < stop_Y; j++) {

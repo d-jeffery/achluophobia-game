@@ -17,6 +17,7 @@ if ( !window.requestAnimationFrame ) {
 var ctx;
 var canvas = document.getElementById("no-where-to-go");
 var key_count = document.getElementById('key-count');
+var updateLoop;
 
 var fade_count;
 
@@ -175,6 +176,8 @@ function initGame() {
 	ctx = canvas.getContext("2d");
 	fade_count = 0.0;
 	
+	if (updateLoop != null) clearInterval(updateLoop);
+	
 	DEBUG = false;
 	GAME_OBJECTS = new Array();
 	NUMBER_OF_ROOMS = NUMBER_OF_KEYS_LEFT = 6;
@@ -192,7 +195,7 @@ function initGame() {
 	//GAME_OBJECTS.push(player);
 	player.init();
 	revealText("objective")
-	setInterval(loop, 5);
+	updateLoop = setInterval(loop, 5);
 	window.requestAnimationFrame(render);
 		
 }

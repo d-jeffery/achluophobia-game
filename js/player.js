@@ -23,7 +23,11 @@ var player = {
 		player_sight.draw();
 	},
 	
+	//TODO: make speed constant with time
 	update: function() {
+		//Check only holding 1 button, otherwise dont do anything
+		var numberDown = rightDown + leftDown + upDown + downDown;
+		
 		if (rightDown) {
 			this.x = this.x + 1;
 			var point_1 = translateToSquare(this.x + this.width/2, this.y - this.width/2);
@@ -32,6 +36,14 @@ var player = {
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.x = this.x - 1;
+				//Shove player around corners
+				if (numberDown == 1) {
+					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
+						this.y = this.y - 1;
+					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
+						this.y = this.y + 1;
+					}
+				}
 			}
 		}
 		if (leftDown) {
@@ -43,6 +55,14 @@ var player = {
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.x = this.x + 1;
+				//Shove player around corners
+				if (numberDown == 1) {
+					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
+						this.y = this.y - 1;
+					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
+						this.y = this.y + 1;
+					}
+				}
 			}
 		}
 		if (upDown) {
@@ -55,6 +75,14 @@ var player = {
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.y = this.y + 1;
+				//Shove player around corners
+				if (numberDown == 1) {
+					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
+						this.x = this.x - 1;
+					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
+						this.x = this.x + 1;
+					}
+				}
 			}
 		}
 		if (downDown) {
@@ -66,6 +94,14 @@ var player = {
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
 				this.y = this.y - 1;
+				//Shove player around corners
+				if (numberDown == 1) {
+					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
+						this.x = this.x - 1;
+					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
+						this.x = this.x + 1;
+					}
+				}
 			}
 		}
 	}
