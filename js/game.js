@@ -64,28 +64,24 @@ document.onkeyup = function onKeyUp(evt) {
 }
 
 document.onmousemove = function mouseMove(event) {
-		var x = new Number();
-        var y = new Number();
+	var x = new Number();
+    var y = new Number();
 
-        if (event.x != undefined && event.y != undefined)
-        {
-          x = event.x;
-          y = event.y;
-        }
-        else // Firefox method to get the position
-        {
-          x = event.clientX + document.body.scrollLeft +
-              document.documentElement.scrollLeft;
-          y = event.clientY + document.body.scrollTop +
-              document.documentElement.scrollTop;
-        }
-
-        x -= canvas.offsetLeft;
-        y -= canvas.offsetTop;
+    if (event.x != undefined && event.y != undefined) {
+		x = event.x;
+        y = event.y;
+	} else {
+		x = event.clientX + document.body.scrollLeft +
+			document.documentElement.scrollLeft;
+		y = event.clientY + document.body.scrollTop +
+			document.documentElement.scrollTop;
+	}
+	
+	x -= canvas.offsetLeft;
+	y -= canvas.offsetTop;
 		
-		MOUSEX = x;
-		MOUSEY = y;
-		
+	MOUSEX = x;
+	MOUSEY = y;	
 }
 
 function clear() {
@@ -135,10 +131,17 @@ function render() {
 }
 
 function loop() {
-	player.update();
-	breathSound.update();
-	for(var i = 0; i < GAME_OBJECTS.length; i++) {
-		GAME_OBJECTS[i].update();
+	if (currentGameState != GAME_STATES.WIN) {
+		player.update();
+		breathSound.update();
+	
+		for(var i = 0; i < GAME_OBJECTS.length; i++) {
+			GAME_OBJECTS[i].update();
+		}
+	} else {
+		if (!breathSound.source.paused) {
+			breathSound.source.pause();
+		}
 	}
 	if (NUMBER_OF_KEYS_LEFT == 0 && currentGameState != GAME_STATES.WIN) {
 		HOUSE_LAYOUT[DOOR_X][DOOR_Y] = 1;
@@ -195,7 +198,6 @@ function initGame() {
 	
 	init_house();
 	
-	//GAME_OBJECTS.push(player);
 	player.init();
 	revealText("objective")
 	updateLoop = setInterval(loop, 17);

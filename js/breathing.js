@@ -1,5 +1,3 @@
-//Code sample stolen from http://www.html5rocks.com/en/tutorials/webaudio/positional_audio/
-
 // Detect if the audio context is supported.
 window.AudioContext = (
   window.AudioContext ||
@@ -9,7 +7,7 @@ window.AudioContext = (
 
 if (!AudioContext) {
   throw new Error("AudioContext not supported!");
-} 
+}
 
 var breathSound = {
 	init : function() {

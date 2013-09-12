@@ -232,9 +232,6 @@ function init_house() {
 	while(room_count < NUMBER_OF_ROOMS) {
 		if (add_room()) ++room_count;
 	}
-	
-	
-	//console.log();
 }
 
 function draw_door() {
@@ -265,6 +262,25 @@ function draw_door() {
 			ctx.fillStyle = "#FFFFFF";
 			ctx.fillRect(0,0,SQUARE_WIDTH,SQUARE_WIDTH);
 			ctx.save();	
+			//ctx.scale(2, 1);
+			ctx.beginPath();
+			ctx.moveTo(0, SQUARE_WIDTH);
+			ctx.lineTo(-SQUARE_WIDTH, SQUARE_WIDTH * 1.5);
+			ctx.bezierCurveTo(-SQUARE_WIDTH, SQUARE_WIDTH * 3, SQUARE_WIDTH * 2, SQUARE_WIDTH * 3, SQUARE_WIDTH * 2, SQUARE_WIDTH * 1.5);
+			ctx.lineTo(SQUARE_WIDTH, SQUARE_WIDTH);
+			
+			var fading_gradient = ctx.createRadialGradient(SQUARE_WIDTH/2, SQUARE_WIDTH, SQUARE_WIDTH * 1.5, SQUARE_WIDTH/2, SQUARE_WIDTH, 0);
+			fading_gradient.addColorStop(0, 'rgba(255,255,255,0)');
+			fading_gradient.addColorStop(0.5, 'rgba(255,255,255,.9)');
+			fading_gradient.addColorStop(1, 'rgba(255,255,255,1)');
+			ctx.fillStyle = fading_gradient;
+			
+			//ctx.fillStyle = "#FFFFFF";
+			ctx.fill();
+			
+			/* ctx.fillStyle = "#FFFFFF";
+			ctx.fillRect(0,0,SQUARE_WIDTH,SQUARE_WIDTH);
+			ctx.save();	
 			ctx.scale(2, 1);
 			ctx.beginPath();
 			ctx.moveTo(0, SQUARE_WIDTH);
@@ -279,7 +295,7 @@ function draw_door() {
 			ctx.beginPath();
 			ctx.arc(SQUARE_WIDTH/4, SQUARE_WIDTH * 1.5, SQUARE_WIDTH/2, 0, Math.PI, false);
 			ctx.fillStyle = "#FFFFFF";
-			ctx.fill();
+			ctx.fill(); */
 			ctx.restore();
 		}
 		
