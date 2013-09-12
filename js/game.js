@@ -136,6 +136,7 @@ function render() {
 
 function loop() {
 	player.update();
+	breathSound.update();
 	for(var i = 0; i < GAME_OBJECTS.length; i++) {
 		GAME_OBJECTS[i].update();
 	}
@@ -190,12 +191,14 @@ function initGame() {
 	
 	key_count.textContent = NUMBER_OF_ROOMS;
 	
+	breathSound.init();
+	
 	init_house();
 	
 	//GAME_OBJECTS.push(player);
 	player.init();
 	revealText("objective")
-	updateLoop = setInterval(loop, 5);
+	updateLoop = setInterval(loop, 17);
 	window.requestAnimationFrame(render);
 		
 }

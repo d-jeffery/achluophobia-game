@@ -2,7 +2,9 @@ var MathHelper = {
 	getAngleTo: function(x1, y1, x2, y2) {
 		var deltaY = y2 - y1;
 		var deltaX = x2 - x1;
-		return (Math.atan2(deltaY, deltaX) * (180 / Math.PI));
+		var rads = Math.atan2(deltaY, deltaX);
+		var degrees = rads * (180.0 / Math.PI);
+		return (degrees > 0.0 ? degrees : (360.0 + degrees));		
 	},
 	dotproduct: function(a,b) {
 		var n = 0;

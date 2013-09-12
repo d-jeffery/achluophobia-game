@@ -2,6 +2,7 @@ var player = {
 	x: 0,
 	y: 0,
 	width: 30,
+	speed: 2,
 
 	init: function() {
 		this.x = (HOUSE_ROWS * SQUARE_WIDTH)/2 + SQUARE_WIDTH/2;
@@ -20,96 +21,105 @@ var player = {
 		ctx.fill();
 		
 		
-		player_sight.draw();
+		playerSight.draw();
 	},
 	
 	//TODO: make speed constant with time
-	update: function() {
+	update: function() {	
 		//Check only holding 1 button, otherwise dont do anything
 		var numberDown = rightDown + leftDown + upDown + downDown;
 		
 		if (rightDown) {
-			this.x = this.x + 1;
+			this.x = this.x + this.speed;
 			var point_1 = translateToSquare(this.x + this.width/2, this.y - this.width/2);
 			var point_2 = translateToSquare(this.x + this.width/2, this.y + this.width/2);
 
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
-				this.x = this.x - 1;
+				this.x = this.x - this.speed;
 				//Shove player around corners
 				if (numberDown == 1) {
 					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
-						this.y = this.y - 1;
+						this.y = this.y - this.speed;
 					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
-						this.y = this.y + 1;
+						this.y = this.y + this.speed;
 					}
 				}
 			}
 		}
 		if (leftDown) {
-			this.x = this.x - 1;
+			this.x = this.x - this.speed;
 			
 			var point_1 = translateToSquare(this.x - this.width/2, this.y - this.width/2);
 			var point_2 = translateToSquare(this.x - this.width/2, this.y + this.width/2);
 
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
-				this.x = this.x + 1;
+				this.x = this.x + this.speed;
 				//Shove player around corners
 				if (numberDown == 1) {
 					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
-						this.y = this.y - 1;
+						this.y = this.y - this.speed;
 					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
-						this.y = this.y + 1;
+						this.y = this.y + this.speed;
 					}
 				}
 			}
 		}
 		if (upDown) {
-			this.y = this.y - 1;
-			
+			this.y = this.y - this.speed;
 						
 			var point_1 = translateToSquare(this.x - this.width/2, this.y - this.width/2);
 			var point_2 = translateToSquare(this.x + this.width/2, this.y - this.width/2);
 
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
-				this.y = this.y + 1;
+				this.y = this.y + this.speed;
 				//Shove player around corners
 				if (numberDown == 1) {
 					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
-						this.x = this.x - 1;
+						this.x = this.x - this.speed;
 					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
-						this.x = this.x + 1;
+						this.x = this.x + this.speed;
 					}
 				}
 			}
 		}
 		if (downDown) {
-			this.y = this.y + 1;
+			this.y = this.y + this.speed;
 									
 			var point_1 = translateToSquare(this.x - this.width/2, this.y + this.width/2);
 			var point_2 = translateToSquare(this.x + this.width/2, this.y + this.width/2);
 
 			if (HOUSE_LAYOUT[point_1.x][point_1.y] <= 0 ||
 				HOUSE_LAYOUT[point_2.x][point_2.y] <= 0) {
-				this.y = this.y - 1;
+				this.y = this.y - this.speed;
 				//Shove player around corners
 				if (numberDown == 1) {
 					if (HOUSE_LAYOUT[point_1.x][point_1.y] > 0) {
-						this.x = this.x - 1;
+						this.x = this.x - this.speed;
 					} else if (HOUSE_LAYOUT[point_2.x][point_2.y] > 0) {
-						this.x = this.x + 1;
+						this.x = this.x + this.speed;
 					}
 				}
 			}
 		}
+		
+		playerSight.update();
 	}
 };
 
-var player_sight = {
+var playerSight = {
 	arc_length : 180,
 	arc_angle : 35,
+	update: function() {
+		var lookStart = MathHelper.getAngleTo(WIDTH/2, HEIGHT/2, MOUSEX, MOUSEY) - this.arc_angle/2;
+		var lookEnd = MathHelper.getAngleTo(WIDTH/2, HEIGHT/2, MOUSEX, MOUSEY) + this.arc_angle/2;
+		if (lookStart < breathSound.getAngle() &&
+			lookEnd > breathSound.getAngle()) {
+			breathSound.newPosition();
+		}
+	},
 	draw: function() {
 		
 		var startX = player.x;
@@ -143,7 +153,5 @@ var player_sight = {
 
 		ctx.translate(-startX, -startY);
 		ctx.restore();
-		
-
 	}
 };

@@ -69,7 +69,7 @@ function draw_wall_shadow(x_coord, y_coord, from_x, from_y, shadow_depth) {
 
 function draw_shadows() {
 	var square = translateToSquare(player.x, player.y);
-	var distanceFrom = (Math.ceil(player_sight.arc_length / SQUARE_WIDTH) + 1);
+	var distanceFrom = (Math.ceil(playerSight.arc_length / SQUARE_WIDTH) + 1);
 	var draw_shadow_depth = distanceFrom * SQUARE_WIDTH;
 	
 	var start_X = (square.x - distanceFrom < 0) ? 0 : square.x - distanceFrom;

@@ -3,40 +3,12 @@
 	<head>
 		<title>Nowhere To Hide</title>
 		<style>
-			* {
-				margin: 0;
-				padding: 0;
-			}
-			
-			p {
-				font: 12pt Arial;
-			}
-		
-			body {
-				background: #000000;
-			}
-			
-			canvas#no-where-to-go {
-				margin: 40px auto 0;
-				display: block;
-			}
-			
-			div#info, div#help {
-				margin: 10px auto;
-				color: #FFFFFF;
-				text-align: center;
-			}
-			
-			a#help-link {
-				color: #FFFFFF;
-				text-align: center;
-				display:block;
-			}
-			
-			div#help {
-				
-			}
-			
+			* { margin: 0; padding: 0; }
+			p {	font: 12pt Arial; }
+			body { background: #000000; }
+			canvas#no-where-to-go { margin: 40px auto 0; display: block; }
+			div#info, div#help { margin: 10px auto; color: #FFFFFF; text-align: center; }
+			a#help-link { color: #FFFFFF; text-align: center; display:block; }			
 		</style>
 	</head>
 	<body>
@@ -44,7 +16,7 @@
 		</canvas>
 		<div id="info">
 			<p id="loading">Loading...</p>
-			<p id="objective" style="display:none;">Collect <span id="key-count">x</span> more keys to unlock the door, to your freedom.</p>
+			<p id="objective" style="display:none;">Collect <span id="key-count">x</span> more keys needed to unlock the door.</p>
 			<p id="goal" style="display:none;">The door is open! Escape while you still can...</p>
 			<p id="goal" style="display:none;">You escaped. Well done. Press R to replay.</p>
 		</div>
@@ -61,6 +33,7 @@
 		<script type="text/javascript" src="js/key.js"></script>
 		<script type="text/javascript" src="js/house.js"></script>
 		<script type="text/javascript" src="js/player.js"></script>
+		<script type="text/javascript" src="js/breathing.js"></script>
 		<script type="text/javascript" src="js/shadow_renderer.js"></script>
 		<script type="text/javascript" src="js/game.js"></script>
 	</footer>
