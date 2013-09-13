@@ -15,7 +15,7 @@ if ( !window.requestAnimationFrame ) {
 }
 
 var ctx;
-var canvas = document.getElementById("no-where-to-go");
+var canvas = document.getElementById("game");
 var key_count = document.getElementById('key-count');
 var updateLoop;
 
