@@ -118,7 +118,7 @@ function animateWin() {
 	if (fade_count < 1)	fade_count += 0.005;
 	ctx.fillStyle = "rgba(0,0,0," + fade_count + ")";
 	ctx.font = "bold 64px Arial";
-	ctx.fillText("You Win!", WIDTH/2 - 140, HEIGHT/2);
+	ctx.fillText("You Escaped!", WIDTH/2 - 200, HEIGHT/2);
 	ctx.font = "bold 24px Arial";
 	ctx.fillText("Press the 'Enter' key to replay...", WIDTH/2 - 165, HEIGHT/2 + 40);
 	
