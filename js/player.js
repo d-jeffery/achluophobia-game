@@ -115,9 +115,9 @@ var playerSight = {
 	update: function() {
 		var lookStart = MathHelper.getAngleTo(WIDTH/2, HEIGHT/2, MOUSEX, MOUSEY) - this.arc_angle/2;
 		var lookEnd = MathHelper.getAngleTo(WIDTH/2, HEIGHT/2, MOUSEX, MOUSEY) + this.arc_angle/2;
-		if (lookStart < breathSound.getAngle() &&
-			lookEnd > breathSound.getAngle()) {
-			breathSound.newPosition();
+		if (lookStart - 10 < beast.getAngle() &&
+			lookEnd + 10 > beast.getAngle()) {
+			beast.newPosition();
 		}
 	},
 	draw: function() {

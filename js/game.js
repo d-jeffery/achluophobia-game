@@ -95,14 +95,18 @@ function animateGame() {
 		
 	if (DEBUG) draw_map();	
 	
-	player.draw();	
+	player.draw();
+	beast.draw();
 
 	for(var i = 0; i < GAME_OBJECTS.length; i++) {
 		GAME_OBJECTS[i].draw();
 	}
+	
+	
 	draw_shadows();
 	
 	draw_door();
+		
 	ctx.translate(player.x - WIDTH/2, player.y - HEIGHT/2);
 	ctx.restore();
 }
@@ -133,14 +137,14 @@ function render() {
 function loop() {
 	if (currentGameState != GAME_STATES.WIN) {
 		player.update();
-		breathSound.update();
+		beast.update();
 	
 		for(var i = 0; i < GAME_OBJECTS.length; i++) {
 			GAME_OBJECTS[i].update();
 		}
 	} else {
-		if (!breathSound.source.paused) {
-			breathSound.source.pause();
+		if (!beast.source.paused) {
+			beast.source.pause();
 		}
 	}
 	if (NUMBER_OF_KEYS_LEFT == 0 && currentGameState != GAME_STATES.WIN) {
@@ -194,7 +198,7 @@ function initGame() {
 	
 	key_count.textContent = NUMBER_OF_ROOMS;
 	
-	breathSound.init();
+	beast.init();
 	
 	init_house();
 	
