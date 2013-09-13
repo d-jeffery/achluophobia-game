@@ -1,8 +1,3 @@
-// ==ClosureCompiler==
-// @output_file_name default.js
-// @compilation_level SIMPLE_OPTIMIZATIONS
-// ==/ClosureCompiler==
-
 var MathHelper = {
 	getAngleTo: function(x1, y1, x2, y2) {
 		var deltaY = y2 - y1;
@@ -22,9 +17,11 @@ var MathHelper = {
 	},
 	distance: function(x1, y1, x2, y2) {
 		return Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2));
+	},
+	randomSign: function() {
+		return Math.random() < 0.5 ? -1 : 1;
 	}
 }
-
 function Key (x, y) {
 	this.x = x;
 	this.y = y;
@@ -181,8 +178,8 @@ function getRandomSquare(min_x, min_y, x_offset, y_offset) {
 
 function hasFreeAdjacent(x, y) {
 	if (x + 1 >= HOUSE_ROWS || y + 1 >= HOUSE_COLS ||
-		x - 1 <= 0 || y - 1 <= 0) {
-		return false;
+		x - 1 < 0 || y - 1 < 0) {
+		return true;
 	}
 
 	if (x < HOUSE_ROWS && HOUSE_LAYOUT[x + 1][y] == 1) {
@@ -232,6 +229,12 @@ function digOut(x, y, w, h) {
 		GAME_OBJECTS.push(new_key);
 	}
 	
+	/* var numberOfWalls = Math.ceil(Math.random() * 3);
+	while(numberOfWalls--) {
+		var wall = getRandomSquare(x+1, y+1, w-1, h-1);
+		HOUSE_LAYOUT[wall.x][wall.y] = 0;
+	} */
+	
 	if (FIRST_ROOM) FIRST_ROOM = false;
 }
 
@@ -276,13 +279,7 @@ function init_house() {
 	for(var i = 0; i < HOUSE_ROWS; i++) {
 		HOUSE_LAYOUT[i] = new Array();
 		for(var j = 0; j < HOUSE_COLS; j++) {
-			if ((i == 0 || i == HOUSE_ROWS-1) ||
-				(j == 0 || j == HOUSE_COLS-1)) {
-				//Create a boundary around the outside
-				HOUSE_LAYOUT[i][j] = -1;
-			} else {
-				HOUSE_LAYOUT[i][j] = 0;
-			}
+			HOUSE_LAYOUT[i][j] = 0;
 		}
 	}
 	
@@ -299,6 +296,16 @@ function init_house() {
 	while(room_count < NUMBER_OF_ROOMS) {
 		if (add_room()) ++room_count;
 	}
+	
+	for(var i = 0; i < HOUSE_ROWS; i++) {
+		for(var j = 0; j < HOUSE_COLS; j++) {
+			if ((i == 0 || i == HOUSE_ROWS-1) ||
+				(j == 0 || j == HOUSE_COLS-1)) {
+				HOUSE_LAYOUT[i][j] = 0;
+			}
+		}
+	}
+	
 }
 
 function draw_door() {
@@ -341,28 +348,8 @@ function draw_door() {
 			fading_gradient.addColorStop(0.5, 'rgba(255,255,255,.9)');
 			fading_gradient.addColorStop(1, 'rgba(255,255,255,1)');
 			ctx.fillStyle = fading_gradient;
-			
-			//ctx.fillStyle = "#FFFFFF";
-			ctx.fill();
-			
-			/* ctx.fillStyle = "#FFFFFF";
-			ctx.fillRect(0,0,SQUARE_WIDTH,SQUARE_WIDTH);
-			ctx.save();	
-			ctx.scale(2, 1);
-			ctx.beginPath();
-			ctx.moveTo(0, SQUARE_WIDTH);
-			ctx.lineTo(-10, SQUARE_WIDTH * 1.5);
-			ctx.lineTo(SQUARE_WIDTH/2 + 10, SQUARE_WIDTH * 1.5);
-			ctx.lineTo(SQUARE_WIDTH/2, SQUARE_WIDTH);
-			ctx.closePath();
-			ctx.fillStyle = "#FFFFFF";
-			ctx.fill();
 
-			
-			ctx.beginPath();
-			ctx.arc(SQUARE_WIDTH/4, SQUARE_WIDTH * 1.5, SQUARE_WIDTH/2, 0, Math.PI, false);
-			ctx.fillStyle = "#FFFFFF";
-			ctx.fill(); */
+			ctx.fill();
 			ctx.restore();
 		}
 		
@@ -382,7 +369,6 @@ function draw_door() {
 		ctx.translate(-DOOR_X * SQUARE_WIDTH, -DOOR_Y * SQUARE_WIDTH);
 		ctx.restore();
 }
-
 var player = {
 	x: 0,
 	y: 0,
@@ -500,9 +486,9 @@ var playerSight = {
 	update: function() {
 		var lookStart = MathHelper.getAngleTo(WIDTH/2, HEIGHT/2, MOUSEX, MOUSEY) - this.arc_angle/2;
 		var lookEnd = MathHelper.getAngleTo(WIDTH/2, HEIGHT/2, MOUSEX, MOUSEY) + this.arc_angle/2;
-		if (lookStart < breathSound.getAngle() &&
-			lookEnd > breathSound.getAngle()) {
-			breathSound.newPosition();
+		if (lookStart - 10 < beast.getAngle() &&
+			lookEnd + 10 > beast.getAngle()) {
+			beast.newPosition();
 		}
 	},
 	draw: function() {
@@ -541,18 +527,9 @@ var playerSight = {
 	}
 };
 
-// Detect if the audio context is supported.
-window.AudioContext = (
-  window.AudioContext ||
-  window.webkitAudioContext ||
-  null
-);
+var BEAST_OFFSET = 200;
 
-if (!AudioContext) {
-  throw new Error("AudioContext not supported!");
-}
-
-var breathSound = {
+var beast = {
 	init : function() {
 		if (typeof(this.source) != "undefined") {
 			this.source.pause();
@@ -563,16 +540,45 @@ var breathSound = {
 		this.source.volume = 0;
 		this.source.play();
 		this.angle = Math.ceil(Math.random() * 360);
-		this.backOffTimer = 1000;
+		this.x = Math.floor(Math.cos(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
+		this.y = Math.floor(Math.sin(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
+		this.escapeAngle = MathHelper.getAngleTo(0, 0, this.x, this.y) + MathHelper.randomSign() * 30;
+		this.backOffTimer = 1200;
+		this.offset = 0;
+		this.speed = 6;
+		this.size = 18;
+		this.backingOff = false;
+	},
+	draw : function() {
+		if (this.backOffTimer > 0 && this.offset == 0) return;
+		ctx.beginPath();
+		ctx.arc( player.x + Math.floor(this.x), player.y + Math.floor(this.y), this.size, 0, 2 * Math.PI, false);
+		ctx.fillStyle = "#000000";
+		ctx.fill();
 	},
 	update : function() {
-		if (this.backOffTimer > 0) {
+		if (!this.backingOff && this.backOffTimer > 0) {
 			this.backOffTimer--;
 			return;
 		}
-		if (this.source.volume < 1) {
+		if (this.backingOff) {
+			this.offset += this.speed;
+			this.x = this.x + Math.floor(Math.cos( this.escapeAngle * ( Math.PI / 180.0 ) ) * ( this.speed ));
+			this.y = this.y + Math.floor(Math.sin( this.escapeAngle * ( Math.PI / 180.0 ) ) * ( this.speed ));
+			if (this.source.volume > 0) this.source.volume = (this.source.volume - 0.01).toFixed(2);
+		}
+		if (this.offset > BEAST_OFFSET) {
+			this.backingOff = false;
+			this.offset = 0;
+			this.source.volume = 0;
+			this.angle = Math.ceil(Math.random() * 360);
+			this.x = Math.floor(Math.cos(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
+			this.y = Math.floor(Math.sin(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
+			this.escapeAngle = MathHelper.getAngleTo(0, 0, this.x, this.y) + MathHelper.randomSign() * 30;
+		}
+		if (!this.backingOff && this.source.volume < 1) {
 			//Damn rounding errors
-			this.source.volume = (this.source.volume + 0.001).toFixed(3);
+			this.source.volume = (this.source.volume + 0.1).toFixed(1);
 		}
 	},
 	getAngle : function() {
@@ -582,9 +588,9 @@ var breathSound = {
 		if (this.backOffTimer > 0) {
 			return;
 		}
-		this.angle = Math.ceil(Math.random() * 360);
-		this.source.volume = 0;
-		this.backOffTimer = Math.random() * 500 + 500;
+		this.backingOff = true;
+		
+		this.backOffTimer = Math.random() * 500 + 600;
 	}
 
 };
@@ -729,7 +735,7 @@ var MOUSEY;
 var GAME_STATES = {
 	WIN : 0,
 	PLAY : 1,
-};
+}
 
 document.onkeydown = function onKeyDown(evt) {
   if (evt.keyCode == 13) enterDown = true;
@@ -779,14 +785,18 @@ function animateGame() {
 		
 	if (DEBUG) draw_map();	
 	
-	player.draw();	
+	player.draw();
+	beast.draw();
 
 	for(var i = 0; i < GAME_OBJECTS.length; i++) {
 		GAME_OBJECTS[i].draw();
 	}
+	
+	
 	draw_shadows();
 	
 	draw_door();
+		
 	ctx.translate(player.x - WIDTH/2, player.y - HEIGHT/2);
 	ctx.restore();
 }
@@ -798,7 +808,7 @@ function animateWin() {
 	if (fade_count < 1)	fade_count += 0.005;
 	ctx.fillStyle = "rgba(0,0,0," + fade_count + ")";
 	ctx.font = "bold 64px Arial";
-	ctx.fillText("You Win!", WIDTH/2 - 140, HEIGHT/2);
+	ctx.fillText("You Escaped!", WIDTH/2 - 200, HEIGHT/2);
 	ctx.font = "bold 24px Arial";
 	ctx.fillText("Press the 'Enter' key to replay...", WIDTH/2 - 165, HEIGHT/2 + 40);
 	
@@ -817,14 +827,14 @@ function render() {
 function loop() {
 	if (currentGameState != GAME_STATES.WIN) {
 		player.update();
-		breathSound.update();
+		beast.update();
 	
 		for(var i = 0; i < GAME_OBJECTS.length; i++) {
 			GAME_OBJECTS[i].update();
 		}
 	} else {
-		if (!breathSound.source.paused) {
-			breathSound.source.pause();
+		if (!beast.source.paused) {
+			beast.source.pause();
 		}
 	}
 	if (NUMBER_OF_KEYS_LEFT == 0 && currentGameState != GAME_STATES.WIN) {
@@ -878,7 +888,7 @@ function initGame() {
 	
 	key_count.textContent = NUMBER_OF_ROOMS;
 	
-	breathSound.init();
+	beast.init();
 	
 	init_house();
 	
@@ -890,4 +900,3 @@ function initGame() {
 }
 
 initGame();
-

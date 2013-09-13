@@ -114,8 +114,8 @@ function getRandomSquare(min_x, min_y, x_offset, y_offset) {
 
 function hasFreeAdjacent(x, y) {
 	if (x + 1 >= HOUSE_ROWS || y + 1 >= HOUSE_COLS ||
-		x - 1 <= 0 || y - 1 <= 0) {
-		return false;
+		x - 1 < 0 || y - 1 < 0) {
+		return true;
 	}
 
 	if (x < HOUSE_ROWS && HOUSE_LAYOUT[x + 1][y] == 1) {
@@ -165,6 +165,12 @@ function digOut(x, y, w, h) {
 		GAME_OBJECTS.push(new_key);
 	}
 	
+	/* var numberOfWalls = Math.ceil(Math.random() * 3);
+	while(numberOfWalls--) {
+		var wall = getRandomSquare(x+1, y+1, w-1, h-1);
+		HOUSE_LAYOUT[wall.x][wall.y] = 0;
+	} */
+	
 	if (FIRST_ROOM) FIRST_ROOM = false;
 }
 
@@ -209,13 +215,7 @@ function init_house() {
 	for(var i = 0; i < HOUSE_ROWS; i++) {
 		HOUSE_LAYOUT[i] = new Array();
 		for(var j = 0; j < HOUSE_COLS; j++) {
-			if ((i == 0 || i == HOUSE_ROWS-1) ||
-				(j == 0 || j == HOUSE_COLS-1)) {
-				//Create a boundary around the outside
-				HOUSE_LAYOUT[i][j] = -1;
-			} else {
-				HOUSE_LAYOUT[i][j] = 0;
-			}
+			HOUSE_LAYOUT[i][j] = 0;
 		}
 	}
 	
@@ -232,6 +232,16 @@ function init_house() {
 	while(room_count < NUMBER_OF_ROOMS) {
 		if (add_room()) ++room_count;
 	}
+	
+	for(var i = 0; i < HOUSE_ROWS; i++) {
+		for(var j = 0; j < HOUSE_COLS; j++) {
+			if ((i == 0 || i == HOUSE_ROWS-1) ||
+				(j == 0 || j == HOUSE_COLS-1)) {
+				HOUSE_LAYOUT[i][j] = 0;
+			}
+		}
+	}
+	
 }
 
 function draw_door() {
@@ -274,28 +284,8 @@ function draw_door() {
 			fading_gradient.addColorStop(0.5, 'rgba(255,255,255,.9)');
 			fading_gradient.addColorStop(1, 'rgba(255,255,255,1)');
 			ctx.fillStyle = fading_gradient;
-			
-			//ctx.fillStyle = "#FFFFFF";
-			ctx.fill();
-			
-			/* ctx.fillStyle = "#FFFFFF";
-			ctx.fillRect(0,0,SQUARE_WIDTH,SQUARE_WIDTH);
-			ctx.save();	
-			ctx.scale(2, 1);
-			ctx.beginPath();
-			ctx.moveTo(0, SQUARE_WIDTH);
-			ctx.lineTo(-10, SQUARE_WIDTH * 1.5);
-			ctx.lineTo(SQUARE_WIDTH/2 + 10, SQUARE_WIDTH * 1.5);
-			ctx.lineTo(SQUARE_WIDTH/2, SQUARE_WIDTH);
-			ctx.closePath();
-			ctx.fillStyle = "#FFFFFF";
-			ctx.fill();
 
-			
-			ctx.beginPath();
-			ctx.arc(SQUARE_WIDTH/4, SQUARE_WIDTH * 1.5, SQUARE_WIDTH/2, 0, Math.PI, false);
-			ctx.fillStyle = "#FFFFFF";
-			ctx.fill(); */
+			ctx.fill();
 			ctx.restore();
 		}
 		

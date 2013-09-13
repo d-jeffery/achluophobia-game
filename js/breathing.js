@@ -1,14 +1,4 @@
 // Detect if the audio context is supported.
-window.AudioContext = (
-  window.AudioContext ||
-  window.webkitAudioContext ||
-  null
-);
-
-if (!AudioContext) {
-  throw new Error("AudioContext not supported!");
-}
-
 var BEAST_OFFSET = 200;
 
 var beast = {
@@ -24,6 +14,7 @@ var beast = {
 		this.angle = Math.ceil(Math.random() * 360);
 		this.x = Math.floor(Math.cos(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
 		this.y = Math.floor(Math.sin(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
+		this.escapeAngle = MathHelper.getAngleTo(0, 0, this.x, this.y) + MathHelper.randomSign() * 30;
 		this.backOffTimer = 1200;
 		this.offset = 0;
 		this.speed = 6;
@@ -44,9 +35,8 @@ var beast = {
 		}
 		if (this.backingOff) {
 			this.offset += this.speed;
-			var escapeAngle = MathHelper.getAngleTo(0, 0, this.x, this.y) - (MathHelper.getAngleTo(WIDTH/2, HEIGHT/2, MOUSEX, MOUSEY) - MathHelper.getAngleTo(0, 0, this.x, this.y));
-			this.x = this.x + Math.floor(Math.cos( escapeAngle * ( Math.PI / 180.0 ) ) * ( this.speed ));
-			this.y = this.y + Math.floor(Math.sin( escapeAngle * ( Math.PI / 180.0 ) ) * ( this.speed ));
+			this.x = this.x + Math.floor(Math.cos( this.escapeAngle * ( Math.PI / 180.0 ) ) * ( this.speed ));
+			this.y = this.y + Math.floor(Math.sin( this.escapeAngle * ( Math.PI / 180.0 ) ) * ( this.speed ));
 			if (this.source.volume > 0) this.source.volume = (this.source.volume - 0.01).toFixed(2);
 		}
 		if (this.offset > BEAST_OFFSET) {
@@ -56,10 +46,11 @@ var beast = {
 			this.angle = Math.ceil(Math.random() * 360);
 			this.x = Math.floor(Math.cos(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
 			this.y = Math.floor(Math.sin(this.angle * ( Math.PI / 180.0 ) ) * ( 50 ));
+			this.escapeAngle = MathHelper.getAngleTo(0, 0, this.x, this.y) + MathHelper.randomSign() * 30;
 		}
 		if (!this.backingOff && this.source.volume < 1) {
 			//Damn rounding errors
-			this.source.volume = (this.source.volume + 0.01).toFixed(2);
+			this.source.volume = (this.source.volume + 0.1).toFixed(1);
 		}
 	},
 	getAngle : function() {
